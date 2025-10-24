@@ -1,0 +1,29 @@
+# Requisitos de Python para Clase 7 - Seguridad en la Nube
+# UTN - Laboratorio de Ciberseguridad
+
+# AWS SDK para Python
+boto3>=1.26.0
+
+# Cliente de línea de comandos de AWS
+awscli>=1.27.0
+
+# Utilidades de análisis de políticas
+policy-sentry>=0.12.0
+
+# Librerías de reportes
+jinja2>=3.1.0
+markdown>=3.4.0
+
+# Análisis de JSON
+jsonschema>=4.17.0
+
+# Colorización de terminal (opcional)
+colorama>=0.4.6
+termcolor>=2.2.0
+
+# Análisis de vulnerabilidades
+safety>=2.3.0
+
+# Testing (opcional para verificar scripts)
+pytest>=7.2.0
+moto>=4.1.0  # Mock de AWS para testing
