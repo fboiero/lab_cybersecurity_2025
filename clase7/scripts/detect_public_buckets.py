@@ -7,7 +7,7 @@ Descripción:
 Este script audita buckets de S3 en AWS para identificar configuraciones
 inseguras que permitan acceso público no autorizado.
 
-Autor: UTN - Laboratorio de Ciberseguridad
+Autor: UTN FRVM - Laboratorio de Ciberseguridad
 Versión: 1.0
 """
 

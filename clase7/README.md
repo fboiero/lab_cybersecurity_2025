@@ -1,13 +1,15 @@
 # CLASE 7 – SEGURIDAD EN LA NUBE Y VIRTUALIZACIÓN
 
-## UTN | Laboratorio de Blockchain y Ciberseguridad
+## Universidad Tecnológica Nacional - FRVM
+## Facultad Regional Villa María
+## Laboratorio de Blockchain y Ciberseguridad
 
 ---
 
 ## CONTEXTO GENERAL DE LA MATERIA
 
 ### Laboratorio de Ciberseguridad
-Este curso forma parte del programa de formación en ciberseguridad de la UTN, enfocado en competencias prácticas para la identificación, análisis y mitigación de vulnerabilidades en entornos reales y simulados.
+Este curso forma parte del programa de formación en ciberseguridad de la UTN FRVM (Facultad Regional Villa María), enfocado en competencias prácticas para la identificación, análisis y mitigación de vulnerabilidades en entornos reales y simulados.
 
 **Áreas cubiertas en el programa:**
 - Fundamentos de seguridad informática
@@ -544,7 +546,7 @@ Los ejercicios se encuentran detallados en:
 
 ## 📄 LICENCIA
 
-© 2025 – Universidad Tecnológica Nacional (UTN)
+© 2025 – Universidad Tecnológica Nacional - FRVM (Facultad Regional Villa María)
 Laboratorio de Blockchain y Ciberseguridad
 
 Material educativo de uso académico.

@@ -952,4 +952,4 @@ check_users_without_mfa()
 
 ---
 
-© 2025 – UTN | Laboratorio de Ciberseguridad
+© 2025 – UTN FRVM (Facultad Regional Villa María) | Laboratorio de Ciberseguridad

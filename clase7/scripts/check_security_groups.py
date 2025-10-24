@@ -7,7 +7,7 @@ Descripción:
 Este script audita Security Groups de EC2 en AWS para identificar
 reglas que permitan acceso público inseguro.
 
-Autor: UTN - Laboratorio de Ciberseguridad
+Autor: UTN FRVM - Laboratorio de Ciberseguridad
 Versión: 1.0
 """
 

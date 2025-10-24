@@ -7,7 +7,7 @@ Descripción:
 Este script audita usuarios IAM en AWS para identificar
 configuraciones inseguras y permisos excesivos.
 
-Autor: UTN - Laboratorio de Ciberseguridad
+Autor: UTN FRVM - Laboratorio de Ciberseguridad
 Versión: 1.0
 """
 

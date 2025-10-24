@@ -1,13 +1,14 @@
 # LABORATORIO DE CIBERSEGURIDAD 2025
 
-## Universidad Tecnológica Nacional (UTN)
+## Universidad Tecnológica Nacional - FRVM
+### Facultad Regional Villa María
 ### Laboratorio de Blockchain y Ciberseguridad
 
 ---
 
 ## DESCRIPCIÓN
 
-Este repositorio contiene el material de laboratorio para el curso de Ciberseguridad de la UTN. Incluye ejercicios prácticos, scripts de auditoría, herramientas y documentación para cada clase del programa.
+Este repositorio contiene el material de laboratorio para el curso de Ciberseguridad de la UTN FRVM (Facultad Regional Villa María). Incluye ejercicios prácticos, scripts de auditoría, herramientas y documentación para cada clase del programa.
 
 El curso cubre aspectos fundamentales y avanzados de la seguridad informática, con énfasis en aplicaciones prácticas y casos reales.
 
@@ -260,12 +261,13 @@ Este proyecto está bajo la licencia MIT. Ver archivo [LICENSE](LICENSE) para m�
 
 ## CONTACTO
 
-**Universidad Tecnológica Nacional**
+**Universidad Tecnológica Nacional - FRVM**
+**Facultad Regional Villa María**
 Laboratorio de Blockchain y Ciberseguridad
 
-- **Email:** [contacto institucional]
-- **Sitio web:** [URL de la facultad]
-- **GitHub:** [https://github.com/tu-usuario/lab_cybersecurity_2025](https://github.com/tu-usuario/lab_cybersecurity_2025)
+- **Email:** fboiero@frvm.utn.edu.ar
+- **Sitio web:** [https://www.frvm.utn.edu.ar](https://www.frvm.utn.edu.ar)
+- **GitHub:** [https://github.com/fboiero/lab_cybersecurity_2025](https://github.com/fboiero/lab_cybersecurity_2025)
 
 ---
 
@@ -330,5 +332,5 @@ El uso indebido de estas herramientas puede ser ilegal. Los autores y la institu
 
 ---
 
-© 2025 - Universidad Tecnológica Nacional (UTN)
+© 2025 - Universidad Tecnológica Nacional - FRVM (Facultad Regional Villa María)
 Laboratorio de Blockchain y Ciberseguridad
