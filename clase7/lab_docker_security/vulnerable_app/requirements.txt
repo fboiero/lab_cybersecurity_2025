@@ -1,0 +1,9 @@
+# Requirements para aplicación vulnerable
+# Versiones antiguas intencionales con vulnerabilidades conocidas
+
+Flask==2.0.1
+Werkzeug==2.0.1
+Jinja2==3.0.1
+requests==2.25.1
+urllib3==1.26.4
+PyYAML==5.3.1

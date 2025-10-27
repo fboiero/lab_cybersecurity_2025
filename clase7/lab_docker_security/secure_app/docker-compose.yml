@@ -1,0 +1,239 @@
+version: '3.8'
+
+# Docker Compose SEGURO - Mejores prácticas aplicadas
+# UTN FRVM - Laboratorio de Ciberseguridad
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # MEJORA: Build arguments para customizar sin hardcodear
+      args:
+        - APP_USER_UID=10001
+        - APP_USER_GID=10001
+    image: secureapp:latest
+    container_name: secure_webapp
+
+    # MEJORA 1: Exponer solo en localhost
+    ports:
+      - "127.0.0.1:5000:5000"
+
+    # MEJORA 2: Sin privilegios
+    privileged: false
+
+    # MEJORA 3: Read-only filesystem
+    read_only: true
+
+    # MEJORA 4: Tmpfs para directorios temporales
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=50m
+      - /app/files:rw,noexec,nosuid,size=100m
+
+    # MEJORA 5: Drop all capabilities, agregar solo las necesarias
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE  # Solo para bindear puerto <1024 si fuera necesario
+
+    # MEJORA 6: Security options
+    security_opt:
+      - no-new-privileges:true  # Prevenir privilege escalation
+      - seccomp=./seccomp-profile.json  # Seccomp profile personalizado
+      # - apparmor=docker-default  # AppArmor profile (Linux)
+
+    # MEJORA 7: Resource limits (prevenir DoS)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+    # MEJORA 8: Limitar número de procesos
+    pids_limit: 100
+
+    # MEJORA 9: Secrets desde archivos (no environment)
+    secrets:
+      - db_password
+      - api_key
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=appdb
+      - DB_USER=appuser
+      # No poner passwords en environment
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - API_KEY_FILE=/run/secrets/api_key
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+
+    # MEJORA 10: Healthcheck para monitoreo
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import requests; requests.get(\"http://localhost:5000\", timeout=2)' || exit 1"]
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+
+    # MEJORA 11: Restart policy
+    restart: unless-stopped
+
+    # MEJORA 12: Redes segmentadas
+    networks:
+      - frontend
+      - backend
+
+    # MEJORA 13: Correr como usuario no-root
+    user: "10001:10001"
+
+    # MEJORA 14: Labels para organización y seguridad
+    labels:
+      - "com.utn.frvm.department=lab-ciberseguridad"
+      - "com.utn.frvm.environment=development"
+      - "com.utn.frvm.security-scan=required"
+      - "com.utn.frvm.maintainer=fboiero@frvm.utn.edu.ar"
+
+    # MEJORA 15: Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "com.utn.frvm.department"
+
+    # MEJORA 16: DNS configuration (prevenir DNS rebinding)
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Base de datos segura
+  db:
+    image: postgres:16-alpine
+    container_name: secure_db
+
+    # Solo en red backend (sin acceso desde frontend)
+    networks:
+      - backend
+
+    # NO exponer puertos al host (solo accesible desde otros contenedores)
+    # ports: []  # No exponer
+
+    # Secrets para credenciales
+    secrets:
+      - db_password
+    environment:
+      - POSTGRES_DB=appdb
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+
+    # Volumen nombrado (no bind mount)
+    volumes:
+      - db_data:/var/lib/postgresql/data:rw
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Healthcheck
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=100m
+      - /var/run/postgresql:rw,noexec,nosuid,size=50m
+
+    # Correr como postgres user (no root)
+    user: "postgres"
+
+    labels:
+      - "com.utn.frvm.department=lab-ciberseguridad"
+      - "com.utn.frvm.service=database"
+
+# Redes segmentadas
+networks:
+  frontend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: secure_frontend
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+  backend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: secure_backend
+    # MEJORA: Red interna (sin acceso a Internet)
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+
+# Secrets desde archivos
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  api_key:
+    file: ./secrets/api_key.txt
+
+# Volúmenes nombrados
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/db
+
+# RESUMEN DE MEJORAS:
+#
+# Seguridad:
+# - Read-only filesystem
+# - No privilegios
+# - Capabilities mínimas
+# - Seccomp/AppArmor
+# - Usuario no-root
+# - Secrets management
+# - Red segmentada
+# - Sin expose innecesario
+#
+# Operación:
+# - Resource limits
+# - Healthchecks
+# - Restart policies
+# - Logging
+# - Labels organizacionales
+#
+# Defensa en profundidad:
+# - Network isolation
+# - Filesystem isolation
+# - Process isolation
+# - Secret isolation
+# - Resource isolation
+#
+# Total: 20+ mejoras de seguridad aplicadas

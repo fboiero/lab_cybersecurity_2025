@@ -1,0 +1,19 @@
+# ESTE ARCHIVO ESTÁ VACÍO INTENCIONALMENTE
+# En el Dockerfile vulnerable NO usamos .dockerignore
+# lo cual es una vulnerabilidad (se copia todo el contexto)
+
+# En un .dockerignore seguro deberíamos tener:
+# .git
+# .gitignore
+# .env
+# *.md
+# __pycache__
+# *.pyc
+# .pytest_cache
+# .vscode
+# .idea
+# *.log
+# secrets/
+# credentials*
+# *.key
+# *.pem

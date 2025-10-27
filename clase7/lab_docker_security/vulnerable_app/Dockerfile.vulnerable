@@ -1,0 +1,119 @@
+# Dockerfile VULNERABLE - Demostración educativa
+# Este Dockerfile contiene MÚLTIPLES vulnerabilidades intencionales
+# NO USAR EN PRODUCCIÓN
+
+# VULNERABILIDAD 1: Imagen base desactualizada con CVEs conocidos
+FROM ubuntu:18.04
+
+# VULNERABILIDAD 2: Correr como root (default)
+# VULNERABILIDAD 3: No especificar versiones de paquetes
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    curl \
+    wget \
+    vim \
+    net-tools \
+    netcat \
+    sudo \
+    ssh \
+    && rm -rf /var/lib/apt/lists/*
+
+# VULNERABILIDAD 4: Secrets hardcodeados en environment variables
+ENV DATABASE_URL=postgresql://admin:supersecret@db:5432/mydb
+ENV API_KEY=sk-1234567890abcdef
+ENV SECRET_KEY=my-super-secret-key-12345
+ENV AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+ENV AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+# VULNERABILIDAD 5: Copiar todo el contexto (incluyendo .git, secrets, etc)
+# No usar .dockerignore
+COPY . /app
+
+WORKDIR /app
+
+# VULNERABILIDAD 6: Instalar dependencias sin pinear versiones
+# VULNERABILIDAD 7: Usar pip sin verificar checksums
+# VULNERABILIDAD 8: No usar --no-cache-dir
+RUN pip3 install -r requirements.txt
+
+# VULNERABILIDAD 9: Agregar paquetes innecesarios que aumentan superficie de ataque
+RUN pip3 install \
+    pickle \
+    pyyaml \
+    requests \
+    paramiko
+
+# VULNERABILIDAD 10: Exponer múltiples puertos innecesarios
+EXPOSE 5000 22 3306 6379 27017
+
+# VULNERABILIDAD 11: Dar permisos 777 a archivos
+RUN chmod -R 777 /app
+
+# VULNERABILIDAD 12: Agregar usuario a sudoers sin password
+RUN useradd -m appuser && \
+    echo "appuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# VULNERABILIDAD 13: Dejar herramientas de desarrollo en imagen de producción
+RUN apt-get update && apt-get install -y \
+    gcc \
+    make \
+    git \
+    strace \
+    gdb
+
+# VULNERABILIDAD 14: Instalar paquetes con vulnerabilidades conocidas
+RUN pip3 install Django==2.2.0
+
+# VULNERABILIDAD 15: Dejar archivos temporales y cachés
+RUN pip3 install numpy && \
+    apt-get update
+
+# VULNERABILIDAD 16: No validar integridad de downloads
+RUN wget https://example.com/some-binary && \
+    chmod +x some-binary || true
+
+# VULNERABILIDAD 17: Hardcodear credenciales en archivos
+RUN echo "admin:password123" > /app/credentials.txt
+
+# VULNERABILIDAD 18: Crear usuarios con passwords débiles
+RUN useradd -m -p $(openssl passwd -1 password) testuser
+
+# VULNERABILIDAD 19: Usar ADD en lugar de COPY
+ADD https://raw.githubusercontent.com/docker/docker-bench-security/master/docker-bench-security.sh /tmp/
+
+# VULNERABILIDAD 20: No especificar HEALTHCHECK
+# (Ausencia de healthcheck)
+
+# VULNERABILIDAD 21: Correr aplicación como root
+CMD ["python3", "/app/app.py"]
+
+# ANÁLISIS DE VULNERABILIDADES EN ESTE DOCKERFILE:
+#
+# CRÍTICAS:
+# - Correr como root
+# - Secrets hardcodeados
+# - Imagen base antigua con CVEs
+# - Permisos 777
+# - Sudo sin password
+#
+# ALTAS:
+# - No pinear versiones
+# - Dependencias vulnerables
+# - Herramientas de desarrollo en producción
+# - Múltiples puertos expuestos
+#
+# MEDIAS:
+# - No usar .dockerignore
+# - COPY de todo el contexto
+# - Cachés no limpiadas
+# - No validar checksums
+#
+# MEJORES PRÁCTICAS IGNORADAS:
+# - Multi-stage builds
+# - Minimal base image
+# - Non-root user
+# - Layer optimization
+# - Security scanning
+# - Least privilege
+# - Immutable infrastructure

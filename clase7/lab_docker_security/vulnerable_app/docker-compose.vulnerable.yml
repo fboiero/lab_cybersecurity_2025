@@ -1,0 +1,106 @@
+version: '3.8'
+
+# Docker Compose VULNERABLE
+# Múltiples configuraciones inseguras para demostración educativa
+# NO USAR EN PRODUCCIÓN
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.vulnerable
+    image: vulnapp:vulnerable
+    container_name: vulnerable_webapp
+
+    # VULNERABILIDAD 1: Exponer a 0.0.0.0 (accesible desde cualquier interfaz)
+    ports:
+      - "5000:5000"
+      - "22:22"          # SSH expuesto
+      - "3306:3306"      # MySQL expuesto
+
+    # VULNERABILIDAD 2: Privileged mode (acceso completo al host)
+    privileged: true
+
+    # VULNERABILIDAD 3: Montar Docker socket (root en host)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/host          # Montar filesystem del host
+      - ./secrets:/secrets:rw  # Secrets con permisos de escritura
+
+    # VULNERABILIDAD 4: Capabilities excesivas
+    cap_add:
+      - ALL
+
+    # VULNERABILIDAD 5: No limitar recursos (DoS)
+    # (ausencia de limits)
+
+    # VULNERABILIDAD 6: Compartir namespace del host
+    network_mode: host
+    pid: host
+    ipc: host
+
+    # VULNERABILIDAD 7: Secrets en variables de ambiente
+    environment:
+      - DB_PASSWORD=supersecretpassword
+      - API_KEY=sk-1234567890abcdef
+      - SECRET_KEY=verysecretkey
+      - DEBUG=true
+      - ADMIN_TOKEN=admin_token_12345
+
+    # VULNERABILIDAD 8: Correr como root (default)
+    # user: "0:0"
+
+    # VULNERABILIDAD 9: Sin healthcheck
+    # (ausencia de healthcheck)
+
+    # VULNERABILIDAD 10: Sin restart policy
+    # (si crashea, queda down)
+
+    # VULNERABILIDAD 11: Todos en la red default
+    # (sin segmentación)
+
+  # VULNERABILIDAD 12: Base de datos sin autenticación
+  db:
+    image: mysql:5.7
+    container_name: vulnerable_db
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # VULNERABILIDAD 13: Redis sin password
+  cache:
+    image: redis:latest
+    container_name: vulnerable_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --protected-mode no
+
+volumes:
+  db_data:
+
+# RESUMEN DE VULNERABILIDADES:
+#
+# CRÍTICAS:
+# - Privileged mode
+# - Docker socket montado
+# - Host filesystem montado
+# - network_mode: host
+# - Cap_add: ALL
+#
+# ALTAS:
+# - Secrets en environment
+# - Sin límites de recursos
+# - Bases de datos sin auth
+# - Puertos sensibles expuestos
+#
+# MEDIAS:
+# - Sin healthcheck
+# - Sin restart policy
+# - Sin segmentación de red
+# - Correr como root
+#
+# Total: 13+ vulnerabilidades críticas
